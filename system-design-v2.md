@@ -53,16 +53,16 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
 - **Tenant Service**: Manages the tenant registry, bootstraps schemas, and integrates with billing hooks.
 - **Auth Service**: Uses Keycloak Identity Management (IDM) or Spring Authorization Server for authentication and MFA.
 - **Ingest Service**: Employs Kafka producers to parse logs and vulnerability feeds.
-- **Threat Service**: A reactive service that correlates events to identify and raise incidents[^2].
+- **Threat Service**: A reactive service that correlates events to identify and raise incidents.
 - **Compliance Service**: Maps security controls, tracks evidence, and generates attestations.
 - **Reporting Service**: Uses reactive aggregation pipelines for data processing and PDF exporting.
 - **Notification Service**: A WebSocket broker with adapters for email and SMS notifications.
-- **AI Insight Service**: A Python-based service using TensorFlow and PyTorch models for anomaly scoring and providing GPT-based advisories[^2].
+- **AI Insight Service**: A Python-based service using TensorFlow and PyTorch models for anomaly scoring and providing GPT-based advisories.
 
 
 ### 3.2 Data Storage Strategy
 
-- **Transactional Data**: A PostgreSQL cluster is used with a schema-per-tenant model for data isolation[^5][^6]. Migrations are managed by Liquibase on a per-schema basis, and Row-Level Security (RLS) policies are enforced.
+- **Transactional Data**: A PostgreSQL cluster is used with a schema-per-tenant model for data isolation. Migrations are managed by Liquibase on a per-schema basis, and Row-Level Security (RLS) policies are enforced.
 - **Time-Series Data**: TimescaleDB is used for storing high-volume security telemetry data.
 - **Object Storage**: MinIO provides object storage for evidence artifacts, which are encrypted at rest.
 
@@ -82,10 +82,10 @@ Real-time functionality is enabled by **Spring WebSocket (STOMP)**, which is bri
 
 - **Scalability**: Services are designed for horizontal scaling using Kubernetes Horizontal Pod Autoscaler (HPA), based on CPU usage and custom Kafka lag metrics.
 - **Resilience**: The system incorporates resilience patterns such as Circuit Breaker (Resilience4j), retry mechanisms, and bulkheads for graceful degradation.
-- **Observability**: Achieved through OpenTelemetry for tracing, Prometheus for metrics, and Loki for log aggregation[^7].
-- **Security**: A Zero-Trust security model is enforced with mutual TLS (mTLS) between services, managed by SPIFFE/SPIRE, and secrets are managed by Vault[^7].
+- **Observability**: Achieved through OpenTelemetry for tracing, Prometheus for metrics, and Loki for log aggregation.
+- **Security**: A Zero-Trust security model is enforced with mutual TLS (mTLS) between services, managed by SPIFFE/SPIRE, and secrets are managed by Vault.
 - **Performance**: The system targets a P99 API latency of 200 milliseconds or less and a Kafka end-to-end latency of 1 second or less.
-- **Compliance**: All services log to an immutable Write-Once-Read-Many (WORM) S3 bucket within 5 seconds for compliance purposes[^7].
+- **Compliance**: All services log to an immutable Write-Once-Read-Many (WORM) S3 bucket within 5 seconds for compliance purposes.
 
 
 ## 4. Technology Stack Matrix
@@ -122,8 +122,8 @@ The deployment also leverages **Amazon RDS** for PostgreSQL with read replicas, 
 
 ## 7. Appendix: Key Design Decisions
 
-1. **Multi-Tenancy**: The schema-per-tenant model was adopted to provide a balance between data isolation and operational complexity, following guidance from the AWS SaaS Lens[^4][^5].
+1. **Multi-Tenancy**: The schema-per-tenant model was adopted to provide a balance between data isolation and operational complexity, following guidance from the AWS SaaS Lens.
 2. **UI Components**: Angular Material 3 components were selected for their accessibility features and enterprise-grade look and feel. Headless UI components are used as a fallback for custom widget development.
 3. **Communication Protocols**: Kafka was chosen for its capabilities in ensuring loose coupling and providing a comprehensive audit trail. gRPC is reserved for specific low-latency read paths to optimize performance.
-4. **Future Enhancements**: There is a plan to adopt the Signals API with zoneless change detection once the technology becomes stable, with the goal of completely removing Zone.js.
+4. **Future Enhancements**: A plan is in place to adopt the Signals API with zoneless change detection once the technology becomes stable, with the intention of replacing Zone.js.
 
