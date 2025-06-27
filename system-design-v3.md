@@ -5,9 +5,9 @@
 
 ## 1. Overview
 
-This document outlines the refined technical and system design for the CyberShield SMB platform[^1][^2]. It provides a detailed breakdown of the front-end and back-end architectural layers, including their respective modules, components, and interfaces. These are mapped to the platform's functional and non-functional requirements.
+This document outlines the refined technical and system design for the CyberShield SMB platform. It provides a detailed breakdown of the front-end and back-end architectural layers, including their respective modules, components, and interfaces. These are mapped to the platform's functional and non-functional requirements.
 
-CyberShield SMB is a multi-tenant cybersecurity and compliance Software-as-a-Service (SaaS) platform[^3][^4]. It is designed to deliver real-time threat detection, automated compliance processes, and AI-driven insights for small and medium-sized businesses.
+CyberShield SMB is a multi-tenant cybersecurity and compliance Software-as-a-Service (SaaS) platform. It is designed to deliver real-time threat detection, automated compliance processes, and AI-driven insights for small and medium-sized businesses.
 
 ## 2. Front-End Architecture
 
