@@ -34,7 +34,7 @@ CyberShield SMB positions itself as the "HubSpot of cybersecurity" for small bus
 
 ## 5. Differentiation Summary
 
-CyberShield SMB differentiates by bundling prevention, detection, response, and compliance into a single SaaS SKU, delivered with a human-assisted MDR service and pricing transparency – something no major competitor offers simultaneously.
+CyberShield SMB differentiates itself by bundling prevention, detection, response, and compliance into a single SaaS SKU, delivered with a human-assisted MDR service and pricing transparency – a combination no major competitor offers simultaneously.
 
 ---
 
@@ -56,8 +56,8 @@ CyberShield SMB differentiates by bundling prevention, detection, response, and 
 ## 8. Marketing Strategy
 
 - **Content thought-leadership:** “Cyber Minute for SMBs” video series.
-- **Partnerships with insurance carriers:** Discounts for customers adopting CyberShield.
-- **Integrations marketplace:** Pre-built connectors announced each quarter.
+- **Partnerships with insurance carriers:** Offer discounts to customers who adopt CyberShield.
+- **Integrations Marketplace:** Pre-built connectors are announced quarterly.
 - **Referral program:** $500 credit per referred customer.
 
 ---
@@ -65,7 +65,7 @@ CyberShield SMB differentiates by bundling prevention, detection, response, and 
 ## 9. Launch Timeline
 
 - **Beta:** Dec-2025 – invite 25 design-partner SMBs.
-- **GA:** March-2026 – virtual launch event, PR, analyst briefings.
+- **GA:** March 2026 – virtual launch event, PR, analyst briefings.
 - **Channel Program GA:** June-2026.
 - **International Expansion (UK, ANZ):** Q4-2026.
 
@@ -82,7 +82,7 @@ CyberShield SMB differentiates by bundling prevention, detection, response, and 
 
 ## Abbreviation Reference
 
-- **SMB:** Small and Medium-sized Business (companies typically with fewer than 500 employees and less than a few hundred million dollars in annual revenue)[2][3][6].
+- **SMB:** Small and Medium-sized Business (companies typically with fewer than 500 employees and less than a few hundred million dollars in annual revenue).
 - **MSP:** Managed Service Provider
 - **MSSP:** Managed Security Service Provider
 - **SIEM:** Security Information and Event Management
