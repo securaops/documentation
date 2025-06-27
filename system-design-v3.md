@@ -61,7 +61,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
 
 #### 3.1.1 Core Microservices for Hybrid RBAC-ABAC Multi-Tenant SaaS
 
-##### **Gateway Service**
+##### 1. **Gateway Service**
 
 - **Technology:** Spring Cloud Gateway
 - **Responsibilities:**
@@ -158,7 +158,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
     - Integrates with Policy Decision Service for access control.
 
 
-#### 3.1.1.2 Authorization Workflow (Hybrid RBAC-ABAC)
+#### 3.1.2 Authorization Workflow (Hybrid RBAC-ABAC)
 
 1. **Authentication:** User logs in via the Auth Service. Token includes tenant and user claims.
 2. **Tenant Context:** Gateway and services validate the tenant context for each request.
@@ -166,7 +166,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
 4. **Policy Evaluation:** Policy Decision Service evaluates hybrid policies (RBAC + ABAC) for each request.
 5. **Access Control:** Services enforce access decisions, ensuring tenant isolation and fine-grained permissions.
 
-#### 3.1.1.3 Summary Table: Core Microservices
+#### 3.1.3 Summary Table: Core Microservices
 
 | Service | Primary Responsibilities | Authorization Model Support |
 | :-- | :-- | :-- |
