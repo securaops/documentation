@@ -17,7 +17,7 @@ The front-end is a single-page application (SPA) developed using **Angular v20**
 
 The front-end is structured into the following modules:
 
-- **App Shell**: Handles the initial bootstrapping, theming, global providers, and lazy-loads feature shells.
+- **App Shell**: Handles the initial bootstrapping, theming, global providers, and lazy-load feature shells.
 - **Core Layout**: Consists of the main interface elements such as the header, side navigation, breadcrumbs, and responsive containers.
 - **Auth Module**: Manages user authentication, including login, multi-factor authentication (MFA), password reset, and Single Sign-On (SSO) using OpenID Connect (OIDC).
 - **Dashboard Module**: Displays key performance indicators (KPIs) for threats, compliance scorecards, and various informational widgets.
@@ -45,7 +45,7 @@ The front-end is structured into the following modules:
 
 ## 3. Back-End Architecture
 
-The back-end is built on a microservices architecture using **Java 21**, **Spring Boot 3.3**, and **Project Reactor WebFlux** for reactive programming[^4][^5]. For AI and machine learning functionalities, services are implemented in **Python 3.12** with **FastAPI** and served via gRPC.
+The back-end is built on a microservices architecture using **Java 21**, **Spring Boot 3.3**, and **Project Reactor WebFlux** for reactive programming. For AI and machine learning functionalities, services are implemented in **Python 3.12** with **FastAPI** and served via gRPC.
 
 ### 3.1 Core Microservices
 
@@ -73,7 +73,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
 ##### 2. **Tenant Service**
 
 - **Responsibilities:**
-    - Manages tenant registry and lifecycle.
+    - Manages the tenant registry and lifecycle.
     - Bootstraps tenant-specific database schemas.
     - Integrates with billing and analytics hooks.
     - Maintains tenant metadata and configuration.
