@@ -2,7 +2,7 @@
 
 **Document Version:** 1.0
 **Date:** June 27, 2025
-**Prepared by:** Product Strategy Team
+**Prepared by:** Product Strategy Team (Mohamed Riyas)
 **Document Type:** Business Requirements Document
 
 ## Executive Summary
@@ -97,7 +97,7 @@ The SMB cybersecurity market presents a significant opportunity:
 
 - **Priority:** High
 - **Description:** Centralized log collection, analysis, and incident management
-    - **SIEM:** Security Information and Event Management, a type of cybersecurity solution that collects and analyzes data from different parts of your IT environment for security monitoring[^4].
+    - **SIEM:** Security Information and Event Management, a type of cybersecurity solution that collects and analyzes data from different parts of your IT environment for security monitoring.
 - **Acceptance Criteria:**
     - Real-time log collection from all security tools and systems
     - Automated threat correlation and analysis
