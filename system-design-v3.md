@@ -97,7 +97,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
     - Integrates with Auth Service for identity management and with Tenant Service for tenant context.
 
 
-### 5. **Policy Decision Service (PDP)**
+##### 5. **Policy Decision Service (PDP)**
 
 - **Technology:** Custom service or Open Policy Agent (OPA)
 - **Responsibilities:**
@@ -105,7 +105,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
     - Receives access control requests with user, resource, and context attributes.
     - Evaluates hybrid policies (e.g., role-based and attribute-based conditions).
     - Maintains a read model of user and resource attributes for fast decision-making.
-    - Supports event-driven updates to keep the read model current[^1][^2][^3].
+    - Supports event-driven updates to keep the read model current.
 
 
 ##### 6. **Ingest Service**
@@ -164,7 +164,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
 2. **Tenant Context:** Gateway and services validate the tenant context for each request.
 3. **User Attributes:** User Service provides user roles and custom attributes for ABAC.
 4. **Policy Evaluation:** Policy Decision Service evaluates hybrid policies (RBAC + ABAC) for each request.
-5. **Access Control:** Services enforce access decisions, ensuring tenant isolation and fine-grained permissions[^3][^2][^4].
+5. **Access Control:** Services enforce access decisions, ensuring tenant isolation and fine-grained permissions.
 
 #### 3.1.1.3 Summary Table: Core Microservices
 
@@ -182,7 +182,7 @@ The back-end is built on a microservices architecture using **Java 21**, **Sprin
 | Notification Service | Real-time notifications, delivery management | Tenant context |
 | AI Insight Service | Anomaly detection, AI advisories | RBAC, ABAC |
 
-This architecture ensures robust, scalable, and secure access control for your multi-tenant SaaS platform, leveraging a hybrid RBAC-ABAC approach for maximum flexibility and security[^3][^2][^4].
+This architecture ensures robust, scalable, and secure access control for your multi-tenant SaaS platform, leveraging a hybrid RBAC-ABAC approach for maximum flexibility and security.
 
 
 ### 3.2 Data Storage Strategy
