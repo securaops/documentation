@@ -1,9 +1,9 @@
 # SecuraOps AI - CyberShield SMB Business Requirements Document
 
-**Document Version:** 1.0
-**Date:** June 27, 2025
-**Prepared by:** Product Strategy Team (Mohamed Riyas)
-**Document Type:** Business Requirements Document
+- **Document Version:** 1.0
+- **Date:** June 27, 2025
+- **Prepared by:** Product Strategy Team (Mohamed Riyas @Lead Engineer / Founding Product Owner)
+- **Document Type:** Business Requirements Document
 
 ## Executive Summary
 
