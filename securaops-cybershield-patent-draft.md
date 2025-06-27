@@ -4,7 +4,7 @@
 Multi-Tenant Compliance Automation Platform with Hybrid RBAC-ABAC Authorization for SaaS Environments
 
 - **Author:** Mohamed Riyas B.Tech, Engineering Lead @Infosys Limited, Bucharest, Romania.
-- **Co Author:** Murugesan, M.tech,.Phd. Research Scholar, NIT
+- **Co Author:** Murugesan, M.Tech,.Phd. Research Scholar@NIT
 
 **Cross-Reference to Related Applications:**
 N/A (if this is the first application, otherwise list prior applications)
