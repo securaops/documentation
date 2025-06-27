@@ -5,9 +5,9 @@
 
 ## 1. Overview
 
-This document outlines the refined technical and system design for the CyberShield SMB platform[^1][^2]. It provides a detailed breakdown of the front-end and back-end architectural layers, including their respective modules, components, and interfaces. These are mapped to the platform's functional and non-functional requirements.
+This document outlines the refined technical and system design for the CyberShield SMB platform. It provides a detailed breakdown of the front-end and back-end architectural layers, including their respective modules, components, and interfaces. These are mapped to the platform's functional and non-functional requirements.
 
-CyberShield SMB is a multi-tenant cybersecurity and compliance Software-as-a-Service (SaaS) platform[^3][^4]. It is designed to deliver real-time threat detection, automated compliance processes, and AI-driven insights for small and medium-sized businesses.
+CyberShield SMB is a multi-tenant cybersecurity and compliance Software-as-a-Service (SaaS) platform. It is designed to deliver real-time threat detection, automated compliance processes, and AI-driven insights for small and medium-sized businesses.
 
 ## 2. Front-End Architecture
 
@@ -17,7 +17,7 @@ The front-end is a single-page application (SPA) developed using **Angular v20**
 
 The front-end is structured into the following modules:
 
-- **App Shell**: Handles the initial bootstrapping, theming, global providers, and lazy-loads feature shells.
+- **App Shell**: Handles the initial bootstrapping, theming, global providers, and lazy-load feature shells.
 - **Core Layout**: Consists of the main interface elements such as the header, side navigation, breadcrumbs, and responsive containers.
 - **Auth Module**: Manages user authentication, including login, multi-factor authentication (MFA), password reset, and Single Sign-On (SSO) using OpenID Connect (OIDC).
 - **Dashboard Module**: Displays key performance indicators (KPIs) for threats, compliance scorecards, and various informational widgets.
@@ -45,7 +45,7 @@ The front-end is structured into the following modules:
 
 ## 3. Back-End Architecture
 
-The back-end is built on a microservices architecture using **Java 21**, **Spring Boot 3.3**, and **Project Reactor WebFlux** for reactive programming[^4][^5]. For AI and machine learning functionalities, services are implemented in **Python 3.12** with **FastAPI** and served via gRPC.
+The back-end is built on a microservices architecture using **Java 21**, **Spring Boot 3.3**, and **Project Reactor WebFlux** for reactive programming. For AI and machine learning functionalities, services are implemented in **Python 3.12** with **FastAPI** and served via gRPC.
 
 ### 3.1 Core Microservices
 
@@ -118,7 +118,7 @@ The platform is deployed on Kubernetes using **Amazon EKS**. The cluster is orga
 - **core-services**: Runs the Java-based microservices.
 - **ai-batch**: Utilizes GPU-enabled nodes for the Python-based AI/ML models.
 
-The deployment also leverages **Amazon RDS** for PostgreSQL with read replicas, **Amazon MSK** for the Kafka cluster, and **Amazon ElastiCache** for Redis to facilitate WebSocket fan-out.
+The deployment also leverages **Amazon RDS** for PostgreSQL with read replicas, **Amazon MSK** for the Kafka cluster, and **Amazon ElastiCache** for Redis, facilitating WebSocket fan-out.
 
 ## 7. Appendix: Key Design Decisions
 
