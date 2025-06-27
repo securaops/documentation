@@ -1,4 +1,4 @@
-# CyberShield SMB Business Requirements Document
+# SecuraOps - CyberShield SMB Business Requirements Document
 
 **Document Version:** 1.0
 **Date:** June 27, 2025
