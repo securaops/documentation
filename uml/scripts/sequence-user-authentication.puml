@@ -1,0 +1,92 @@
+
+@startuml User Authentication Sequence
+actor User as U
+participant "Frontend App" as FE
+participant "Gateway Service" as GW
+participant "Auth Service" as AS
+participant "Keycloak IDM" as KC
+participant "User Service" as US
+participant "Policy Decision" as PDS
+database "PostgreSQL" as DB
+
+title User Authentication & Authorization Flow
+
+U -> FE: Enter credentials
+activate FE
+
+FE -> GW: POST /auth/login
+activate GW
+
+GW -> AS: Forward auth request
+activate AS
+
+AS -> KC: Validate credentials
+activate KC
+
+alt Credentials Valid
+    KC -> AS: Return user claims
+    AS -> US: Get user profile
+    activate US
+
+    US -> DB: Query user data
+    activate DB
+    DB --> US: User profile
+    deactivate DB
+
+    US --> AS: User attributes
+    deactivate US
+
+    AS -> KC: Request JWT token
+    KC --> AS: JWT with claims
+    AS --> GW: JWT + user context
+    deactivate KC
+    deactivate AS
+
+    GW --> FE: 200 OK + JWT
+    deactivate GW
+
+    FE -> FE: Store JWT
+    FE --> U: Login success
+
+    note right of FE: User is authenticated\nJWT contains tenant & user claims
+
+else Credentials Invalid
+    KC --> AS: Authentication failed
+    AS --> GW: 401 Unauthorized
+    GW --> FE: 401 Unauthorized
+    FE --> U: Login failed
+end
+
+' Subsequent API Request with Authorization
+U -> FE: Navigate to dashboard
+FE -> GW: GET /api/dashboard\nAuthorization: Bearer JWT
+activate GW
+
+GW -> GW: Validate JWT
+GW -> PDS: Check permissions\n(user, resource, action)
+activate PDS
+
+PDS -> DB: Query user roles & attributes
+activate DB
+DB --> PDS: Role & attribute data
+deactivate DB
+
+PDS -> PDS: Evaluate RBAC + ABAC policies
+PDS --> GW: Access decision (PERMIT/DENY)
+deactivate PDS
+
+alt Access Permitted
+    GW -> "Dashboard Service": GET dashboard data
+    activate "Dashboard Service"
+    "Dashboard Service" --> GW: Dashboard data
+    deactivate "Dashboard Service"
+    GW --> FE: 200 OK + data
+else Access Denied
+    GW --> FE: 403 Forbidden
+end
+
+deactivate GW
+FE --> U: Display dashboard/error
+deactivate FE
+
+@enduml

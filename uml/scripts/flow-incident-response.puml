@@ -1,0 +1,180 @@
+
+@startuml Incident Response Workflow
+start
+
+:Security event detected;
+note right: From endpoint agent, network\nmonitoring, or external sources
+
+:Event ingested by system;
+
+:Apply initial filtering;
+if (Event matches\nknown patterns?) then (noise)
+    :Discard as noise;
+    stop
+else (potential threat)
+    :Continue processing;
+endif
+
+:Correlate with existing events;
+note right: Look for related events\nfrom same endpoint or user
+
+:Apply AI/ML analysis;
+note right: Anomaly detection,\nbehavior analysis, threat scoring
+
+:Calculate threat confidence score;
+
+if (Confidence score > 0.8?) then (high)
+    :Create high-priority incident;
+    :Auto-assign to senior analyst;
+
+    fork
+        :Send immediate alert;
+        note right: Email, SMS, WebSocket
+    fork again
+        :Log to SIEM;
+    fork again
+        :Update dashboard;
+    end fork
+
+else (low)
+    if (Confidence score > 0.5?) then (medium)
+        :Create medium-priority incident;
+        :Queue for analyst review;
+        :Send standard alert;
+    else (low)
+        :Log event only;
+        :No incident created;
+        stop
+    endif
+endif
+
+:Analyst receives alert;
+
+:Initial triage and investigation;
+fork
+    :Review event timeline;
+fork again
+    :Check endpoint status;
+fork again
+    :Analyze network traffic;
+fork again
+    :Review user activity;
+end fork
+
+:Classify threat type;
+note right: Malware, phishing, data breach,\nunauthorized access, etc.
+
+if (False positive?) then (yes)
+    :Mark as false positive;
+    :Close incident;
+    :Update ML model;
+    stop
+else (no)
+    :Continue investigation;
+endif
+
+:Determine impact and scope;
+
+if (Containment needed?) then (yes)
+    fork
+        :Isolate affected endpoint;
+    fork again
+        :Block malicious IPs;
+    fork again
+        :Disable compromised accounts;
+    fork again
+        :Quarantine files;
+    end fork
+
+    :Verify containment;
+    note right: Confirm threat is isolated
+endif
+
+:Collect forensic evidence;
+fork
+    :Memory dump;
+fork again
+    :Disk imaging;
+fork again
+    :Network logs;
+fork again
+    :System logs;
+end fork
+
+:Analyze evidence;
+note right: Determine attack vector,\nmalware family, data accessed
+
+:Determine eradication steps;
+
+if (Malware present?) then (yes)
+    :Remove malware;
+    :Clean infected files;
+endif
+
+if (Vulnerabilities exploited?) then (yes)
+    :Apply security patches;
+    :Update configurations;
+endif
+
+if (Credentials compromised?) then (yes)
+    :Force password reset;
+    :Revoke access tokens;
+    :Enable MFA;
+endif
+
+:Begin recovery process;
+fork
+    :Restore from clean backups;
+fork again
+    :Rebuild compromised systems;
+fork again
+    :Restore network connectivity;
+fork again
+    :Re-enable user accounts;
+end fork
+
+:Verify system integrity;
+note right: Ensure systems are clean\nand functioning normally
+
+:Monitor for reinfection;
+note right: Enhanced monitoring for\n24-48 hours post-recovery
+
+if (Regulatory reporting required?) then (yes)
+    :Prepare regulatory notifications;
+    note right: GDPR, HIPAA, PCI DSS\nrequirements vary by jurisdiction
+
+    :Submit required reports;
+    note right: Within mandated timeframes
+endif
+
+if (Customer notification required?) then (yes)
+    :Prepare customer communications;
+    :Coordinate with legal/PR teams;
+    :Send notifications;
+endif
+
+:Document lessons learned;
+fork
+    :Update incident response procedures;
+fork again
+    :Enhance detection rules;
+fork again
+    :Update training materials;
+fork again
+    :Improve security controls;
+end fork
+
+:Conduct post-incident review;
+note right: Team meeting to discuss\nresponse effectiveness
+
+:Update compliance documentation;
+note right: Evidence for compliance\naudits and assessments
+
+:Close incident;
+
+:Generate final report;
+note right: Executive summary,\ntechnical details, recommendations
+
+stop
+
+@enduml

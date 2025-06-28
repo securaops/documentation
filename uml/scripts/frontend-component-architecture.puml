@@ -1,0 +1,131 @@
+
+@startuml Frontend Component Architecture
+!define RECTANGLE class
+
+package "CyberShield SMB Frontend" {
+
+    package "App Shell" {
+        component [Bootstrap] as BS
+        component [Theming] as TH
+        component [Global Providers] as GP
+        component [Feature Shell Loader] as FSL
+    }
+
+    package "Core Layout" {
+        component [Header] as HDR
+        component [Side Navigation] as NAV
+        component [Breadcrumbs] as BC
+        component [Responsive Container] as RC
+    }
+
+    package "Auth Module" {
+        component [Login Component] as LC
+        component [MFA Component] as MFA
+        component [Password Reset] as PR
+        component [SSO Handler] as SSO
+        component [Auth Guard] as AG
+    }
+
+    package "Dashboard Module" {
+        component [Dashboard Container] as DC
+        component [Threat KPI Widget] as TKW
+        component [Compliance Card] as CC
+        component [Alert Widget] as AW
+        component [Chart Components] as CHC
+    }
+
+    package "Incidents Module" {
+        component [Incident List] as IL
+        component [Incident Detail] as ID
+        component [Timeline View] as TV
+        component [Response Actions] as RA
+    }
+
+    package "Compliance Module" {
+        component [Framework Selector] as FS
+        component [Control Evidence] as CE
+        component [Auditor View] as AV
+        component [Evidence Upload] as EU
+    }
+
+    package "Reporting Module" {
+        component [Export Center] as EC
+        component [Report Builder] as RB
+        component [Schedule Manager] as SM
+        component [Format Handler] as FH
+    }
+
+    package "Admin Module" {
+        component [Tenant Settings] as TS
+        component [User Management] as UM
+        component [Billing Interface] as BI
+        component [Feature Flags] as FF
+    }
+
+    package "Shared Services" {
+        component [API Client] as API
+        component [WebSocket Service] as WS
+        component [State Management] as ST
+        component [Notification Service] as NS
+    }
+
+    package "External Dependencies" {
+        component [Angular Material] as AM
+        component [Tailwind CSS] as TC
+        component [RxJS] as RX
+        component [WebSocket] as WSC
+    }
+}
+
+' Relationships
+BS --> GP : initializes
+GP --> FSL : provides
+FSL --> HDR : loads
+FSL --> NAV : loads
+FSL --> BC : loads
+FSL --> RC : loads
+
+HDR --> LC : navigates
+NAV --> DC : routes
+NAV --> IL : routes
+NAV --> FS : routes
+NAV --> EC : routes
+NAV --> TS : routes
+
+LC --> MFA : triggers
+LC --> AG : validates
+SSO --> AG : authenticates
+
+DC --> TKW : displays
+DC --> CC : displays
+DC --> AW : displays
+DC --> CHC : displays
+
+IL --> ID : selects
+ID --> TV : shows
+ID --> RA : enables
+
+FS --> CE : displays
+CE --> EU : uploads
+AV --> CE : views
+
+EC --> RB : uses
+RB --> SM : schedules
+RB --> FH : formats
+
+TS --> UM : manages
+UM --> BI : configures
+BI --> FF : controls
+
+API --> WS : communicates
+WS --> NS : notifies
+ST --> API : manages
+NS --> AW : updates
+
+AM --> LC : styles
+AM --> DC : styles
+TC --> RC : styles
+RX --> ST : reactive
+WSC --> WS : connects
+
+@enduml

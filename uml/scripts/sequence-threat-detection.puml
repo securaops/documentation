@@ -1,0 +1,142 @@
+
+@startuml Threat Detection and Incident Response
+participant "Endpoint Agent" as EA
+participant "Ingest Service" as IS
+participant "Kafka" as K
+participant "Threat Service" as TS
+participant "AI Insight Service" as AIS
+participant "Notification Service" as NS
+participant "WebSocket Gateway" as WSG
+participant "Frontend Dashboard" as FE
+database "PostgreSQL" as DB
+database "TimescaleDB" as TDB
+
+title Threat Detection and Incident Response Flow
+
+EA -> IS: Send security event\n(malware detected)
+activate IS
+
+IS -> IS: Parse and validate event
+IS -> K: Publish event to topic\n(security.events)
+activate K
+
+IS -> TDB: Store raw event
+activate TDB
+TDB --> IS: Event stored
+deactivate TDB
+
+IS --> EA: ACK event received
+deactivate IS
+
+K -> TS: Consume event
+activate TS
+
+TS -> TS: Correlate with\nexisting events
+TS -> AIS: Request anomaly scoring
+activate AIS
+
+AIS -> AIS: Apply ML models\n(confidence: 0.92)
+AIS --> TS: Anomaly score + classification
+deactivate AIS
+
+alt High Severity Threat (score > 0.8)
+    TS -> TS: Create incident
+    TS -> DB: Store incident
+    activate DB
+    DB --> TS: Incident ID
+    deactivate DB
+
+    TS -> K: Publish incident event
+    K -> NS: Consume incident
+    activate NS
+
+    NS -> NS: Determine notification rules
+    NS -> WSG: Send real-time alert
+    activate WSG
+
+    WSG -> FE: WebSocket message\n(new critical incident)
+    activate FE
+    FE -> FE: Display alert banner
+    FE --> WSG: ACK received
+    deactivate FE
+    deactivate WSG
+
+    NS -> "Email Service": Send email alert\nto security team
+    activate "Email Service"
+    "Email Service" --> NS: Email sent
+    deactivate "Email Service"
+
+    deactivate NS
+
+    note over TS, FE: Incident created and\nsecurity team notified
+
+else Low Severity (score < 0.8)
+    TS -> TDB: Update event metadata\n(marked as reviewed)
+    TDB --> TS: Updated
+    note over TS: Event logged but\nno incident created
+end
+
+deactivate K
+deactivate TS
+
+' Manual Incident Investigation
+actor "Security Analyst" as SA
+SA -> FE: View incident details
+activate FE
+
+FE -> "Gateway": GET /api/incidents/{id}
+activate "Gateway"
+
+"Gateway" -> TS: Fetch incident
+activate TS
+
+TS -> DB: Query incident + related events
+activate DB
+DB --> TS: Incident data
+deactivate DB
+
+TS --> "Gateway": Incident details
+deactivate TS
+
+"Gateway" --> FE: Incident data
+deactivate "Gateway"
+
+FE --> SA: Display incident timeline
+deactivate FE
+
+SA -> FE: Execute response action\n(isolate endpoint)
+activate FE
+
+FE -> "Gateway": POST /api/incidents/{id}/actions
+activate "Gateway"
+
+"Gateway" -> TS: Execute isolation
+activate TS
+
+TS -> "Endpoint Service": Isolate endpoint
+activate "Endpoint Service"
+
+"Endpoint Service" -> EA: Send isolation command
+activate EA
+EA -> EA: Block network access
+EA --> "Endpoint Service": Isolation confirmed
+deactivate EA
+
+"Endpoint Service" --> TS: Action completed
+deactivate "Endpoint Service"
+
+TS -> DB: Update incident status
+activate DB
+DB --> TS: Status updated
+deactivate DB
+
+TS --> "Gateway": Action result
+deactivate TS
+
+"Gateway" --> FE: 200 OK
+deactivate "Gateway"
+
+FE --> SA: Action completed
+deactivate FE
+
+@enduml

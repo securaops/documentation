@@ -1,0 +1,127 @@
+
+@startuml Compliance Assessment Workflow
+start
+
+:Select Compliance Framework;
+note right: SOC 2, HIPAA, PCI DSS, etc.
+
+:System maps controls to framework;
+note right: Automatic mapping from\nglobal controls database
+
+:Initialize assessment for each control;
+
+fork
+    :Control 1: Access Management;
+    fork
+        :Collect evidence automatically;
+        note right: Log files, config snapshots
+    fork again
+        :Upload manual evidence;
+        note right: Policies, procedures, training records
+    end merge
+    :Assess control compliance;
+    if (Evidence sufficient?) then (yes)
+        :Mark control as compliant;
+    else (no)
+        :Mark control as non-compliant;
+        :Create remediation task;
+    endif
+
+fork again
+    :Control 2: Data Protection;
+    fork
+        :Scan encryption status;
+    fork again
+        :Review backup procedures;
+    end merge
+    :Assess control compliance;
+    if (Evidence sufficient?) then (yes)
+        :Mark control as compliant;
+    else (no)
+        :Mark control as non-compliant;
+        :Create remediation task;
+    endif
+
+fork again
+    :Control N: Incident Response;
+    :Collect required evidence;
+    :Assess control compliance;
+    if (Evidence sufficient?) then (yes)
+        :Mark control as compliant;
+    else (no)
+        :Mark control as non-compliant;
+        :Create remediation task;
+    endif
+end fork
+
+:Calculate overall compliance score;
+
+if (All controls compliant?) then (yes)
+    :Generate compliance certificate;
+    :Schedule next assessment;
+else (no)
+    :Generate gap analysis report;
+    :Assign remediation tasks;
+    :Set review timeline;
+
+    fork
+        :Implement remediation;
+        :Update evidence;
+        :Re-assess control;
+    fork again
+        :Monitor progress;
+        :Send status updates;
+    end fork
+
+    :Check remediation completion;
+    if (All gaps addressed?) then (yes)
+        :Generate compliance certificate;
+        :Schedule next assessment;
+    else (no)
+        :Continue remediation;
+        note right: Iterative process until\nall controls are compliant
+    endif
+endif
+
+:Notify stakeholders;
+note right: Email alerts, dashboard updates
+
+:Archive evidence;
+note right: Encrypted storage with\nintegrity verification
+
+if (Audit requested?) then (yes)
+    :Create auditor access;
+    note right: Secure portal with\nread-only permissions
+
+    :Prepare audit package;
+    fork
+        :Compile evidence;
+    fork again
+        :Generate reports;
+    fork again
+        :Create evidence index;
+    end fork
+
+    :Provide auditor access;
+
+    repeat
+        :Auditor reviews evidence;
+        :Auditor submits findings;
+        if (Additional evidence needed?) then (yes)
+            :Collect additional evidence;
+        else (no)
+            :Continue;
+        endif
+    repeat while (Audit complete?) is (no)
+    -> yes;
+
+    :Finalize audit results;
+    :Update compliance status;
+endif
+
+:Schedule next assessment cycle;
+note right: Based on framework requirements\nand business needs
+
+stop
+
+@enduml
