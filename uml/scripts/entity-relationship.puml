@@ -1,0 +1,227 @@
+
+@startuml Database Entity Relationship Diagram
+!define table(name) class name << (T,#FFAAAA) >>
+!define pk(x) <u>x</u>
+!define fk(x) #x
+
+' Global Schema Tables
+package "Global Schema (public)" {
+    table(tenants) {
+        pk(id): UUID
+        name: VARCHAR(255)
+        subdomain: VARCHAR(100) [UNIQUE]
+        schema_name: VARCHAR(100) [UNIQUE]
+        status: VARCHAR(50)
+        subscription_plan: VARCHAR(100)
+        max_users: INTEGER
+        max_endpoints: INTEGER
+        created_at: TIMESTAMP
+        updated_at: TIMESTAMP
+        billing_email: VARCHAR(255)
+        technical_contact: VARCHAR(255)
+    }
+
+    table(compliance_frameworks) {
+        pk(id): UUID
+        name: VARCHAR(100) [UNIQUE]
+        version: VARCHAR(50)
+        description: TEXT
+        is_active: BOOLEAN
+        created_at: TIMESTAMP
+    }
+
+    table(compliance_controls) {
+        pk(id): UUID
+        fk(framework_id): UUID
+        control_number: VARCHAR(50)
+        title: VARCHAR(500)
+        description: TEXT
+        control_type: VARCHAR(100)
+        category: VARCHAR(100)
+        is_active: BOOLEAN
+    }
+}
+
+' Tenant Schema Tables (per tenant)
+package "Tenant Schema (tenant_<id>)" {
+    table(users) {
+        pk(id): UUID
+        fk(tenant_id): UUID
+        email: VARCHAR(255) [UNIQUE]
+        first_name: VARCHAR(100)
+        last_name: VARCHAR(100)
+        phone: VARCHAR(20)
+        is_active: BOOLEAN
+        last_login: TIMESTAMP
+        mfa_enabled: BOOLEAN
+        created_at: TIMESTAMP
+        updated_at: TIMESTAMP
+        password_hash: VARCHAR(255)
+        role: VARCHAR(100)
+    }
+
+    table(endpoints) {
+        pk(id): UUID
+        hostname: VARCHAR(255)
+        ip_address: INET
+        mac_address: MACADDR
+        operating_system: VARCHAR(100)
+        os_version: VARCHAR(100)
+        endpoint_type: VARCHAR(50)
+        status: VARCHAR(50)
+        last_seen: TIMESTAMP
+        agent_version: VARCHAR(50)
+        location: VARCHAR(255)
+        fk(owner_user_id): UUID
+        created_at: TIMESTAMP
+        updated_at: TIMESTAMP
+    }
+
+    table(threats) {
+        pk(id): UUID
+        threat_type: VARCHAR(100)
+        severity: VARCHAR(20)
+        status: VARCHAR(50)
+        title: VARCHAR(500)
+        description: TEXT
+        fk(source_endpoint_id): UUID
+        fk(assigned_user_id): UUID
+        detected_at: TIMESTAMP
+        resolved_at: TIMESTAMP
+        created_at: TIMESTAMP
+        updated_at: TIMESTAMP
+        mitre_tactic: VARCHAR(100)
+        mitre_technique: VARCHAR(100)
+        confidence_score: DECIMAL(3,2)
+    }
+
+    table(security_events) {
+        pk(id): UUID
+        fk(endpoint_id): UUID
+        event_type: VARCHAR(100)
+        event_data: JSONB
+        timestamp: TIMESTAMP
+        severity: VARCHAR(20)
+        processed: BOOLEAN
+        fk(threat_id): UUID
+        created_at: TIMESTAMP
+    }
+
+    table(vulnerabilities) {
+        pk(id): UUID
+        cve_id: VARCHAR(50)
+        title: VARCHAR(500)
+        description: TEXT
+        severity: VARCHAR(20)
+        cvss_score: DECIMAL(3,1)
+        fk(endpoint_id): UUID
+        status: VARCHAR(50)
+        discovered_at: TIMESTAMP
+        patched_at: TIMESTAMP
+        created_at: TIMESTAMP
+    }
+
+    table(compliance_assessments) {
+        pk(id): UUID
+        fk(framework_id): UUID
+        fk(control_id): UUID
+        status: VARCHAR(50)
+        evidence_collected: BOOLEAN
+        last_assessed: TIMESTAMP
+        next_assessment: TIMESTAMP
+        notes: TEXT
+        fk(assigned_user_id): UUID
+        created_at: TIMESTAMP
+        updated_at: TIMESTAMP
+    }
+
+    table(compliance_evidence) {
+        pk(id): UUID
+        fk(assessment_id): UUID
+        evidence_type: VARCHAR(100)
+        file_name: VARCHAR(255)
+        file_path: VARCHAR(500)
+        file_size: BIGINT
+        mime_type: VARCHAR(100)
+        hash_sha256: VARCHAR(64)
+        fk(uploaded_by): UUID
+        uploaded_at: TIMESTAMP
+        description: TEXT
+    }
+
+    table(notifications) {
+        pk(id): UUID
+        fk(user_id): UUID
+        type: VARCHAR(100)
+        title: VARCHAR(255)
+        message: TEXT
+        priority: VARCHAR(20)
+        read: BOOLEAN
+        related_entity_type: VARCHAR(100)
+        related_entity_id: UUID
+        created_at: TIMESTAMP
+        read_at: TIMESTAMP
+    }
+
+    table(reports) {
+        pk(id): UUID
+        name: VARCHAR(255)
+        type: VARCHAR(100)
+        format: VARCHAR(20)
+        status: VARCHAR(50)
+        file_path: VARCHAR(500)
+        file_size: BIGINT
+        parameters: JSONB
+        fk(generated_by): UUID
+        generated_at: TIMESTAMP
+        expires_at: TIMESTAMP
+        created_at: TIMESTAMP
+    }
+
+    table(audit_logs) {
+        pk(id): UUID
+        fk(user_id): UUID
+        action: VARCHAR(100)
+        entity_type: VARCHAR(100)
+        entity_id: UUID
+        old_values: JSONB
+        new_values: JSONB
+        ip_address: INET
+        user_agent: TEXT
+        session_id: VARCHAR(255)
+        timestamp: TIMESTAMP
+        success: BOOLEAN
+        error_message: TEXT
+    }
+}
+
+' Global Schema Relationships
+compliance_frameworks ||--o{ compliance_controls : "contains"
+
+' Tenant Schema Relationships
+users ||--o{ endpoints : "owns"
+users ||--o{ threats : "assigned_to"
+users ||--o{ compliance_assessments : "assigned_to"
+users ||--o{ compliance_evidence : "uploaded_by"
+users ||--o{ notifications : "receives"
+users ||--o{ reports : "generated_by"
+users ||--o{ audit_logs : "performed_by"
+
+endpoints ||--o{ threats : "source"
+endpoints ||--o{ security_events : "generates"
+endpoints ||--o{ vulnerabilities : "has"
+
+threats ||--o{ security_events : "contains"
+
+compliance_assessments ||--o{ compliance_evidence : "supported_by"
+
+' Cross-schema relationships (logical)
+tenants ||--o{ users : "contains"
+compliance_frameworks ||--o{ compliance_assessments : "framework"
+compliance_controls ||--o{ compliance_assessments : "control"
+
+note top of tenants : "Global reference table\nfor tenant management"
+note top of compliance_frameworks : "Global reference table\nfor compliance frameworks"
+note top of users : "Tenant-specific schema\nwith RLS policies"
+
+@enduml

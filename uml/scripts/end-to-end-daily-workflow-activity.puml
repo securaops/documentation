@@ -1,0 +1,355 @@
+
+@startuml End-to-End Daily Workflow - CyberShield SMB
+!define SWIMLANE_WIDTH 200
+
+title Complete End-to-End Daily Workflow - CyberShield SMB Platform\nFrom Initial Setup to Daily Operations (Single Tenant Complete Lifecycle)
+
+
+|#LightBlue|Business Owner/CEO|
+start
+:Business Owner decides to implement cybersecurity solution;
+:Visits CyberShield SMB website;
+:Downloads security assessment tool;
+:Completes cybersecurity readiness questionnaire;
+:Attends "Cyber Minute for SMBs" webinar;
+
+|#LightGreen|Sales Representative|
+:Receives Marketing Qualified Lead (MQL);
+:Conducts discovery call;
+:Performs technical requirements assessment;
+:Identifies compliance framework needs;
+:Generates custom proposal;
+
+|#LightBlue|Business Owner/CEO|
+:Reviews proposal and pricing;
+:Requests interactive demo;
+
+|#LightGreen|Sales Representative|
+:Sets up personalized demo environment;
+:Conducts demo with client-specific scenarios;
+:Provides live threat simulation;
+:Shows compliance dashboard walkthrough;
+
+|#LightBlue|Business Owner/CEO|
+:Requests 14-day free trial;
+
+|#LightCoral|Customer Success Manager|
+:Provisions sandbox environment;
+:Populates sample data for evaluation;
+:Conducts guided tour;
+:Monitors trial usage and provides support;
+
+|#LightBlue|Business Owner/CEO|
+:Evaluates platform during trial;
+if (Satisfied with trial?) then (yes)
+  :Signs subscription agreement;
+  :Selects pricing plan (Starter/Professional/Enterprise);
+else (no)
+  :Requests trial extension or ends evaluation;
+  stop
+endif
+
+|#LightCoral|Customer Success Manager|
+:Initiates implementation planning;
+:Reviews technical requirements;
+:Creates integration timeline;
+:Schedules go-live date;
+
+|#Yellow|System (Automated)|
+:Tenant provisioning initiated;
+:Creates tenant schema in PostgreSQL;
+:Executes Liquibase migrations;
+:Configures default security policies;
+:Sets up billing integration;
+note right: < 5 minutes automated process
+
+|#LightSalmon|IT Administrator|
+:Receives admin account credentials;
+:First login to CyberShield platform;
+:Completes MFA setup;
+:Configures notification preferences;
+:Customizes dashboard layout;
+
+:Integrates with Active Directory/LDAP;
+:Configures Single Sign-On (SSO);
+:Sets up email server integration;
+:Connects third-party security tools;
+
+:Downloads endpoint agent installers;
+:Deploys agents via GPO/SCCM (Windows);
+:Installs agents via MDM (macOS/Mobile);
+:Configures network device monitoring;
+:Sets up firewall integration;
+
+:Configures vulnerability scanning schedules;
+:Sets up automated patch management;
+:Configures backup and recovery;
+:Tests all integrations;
+
+|#LightGreen|Compliance Manager|
+:Selects applicable compliance frameworks;
+:Maps organizational controls to frameworks;
+:Configures automated evidence collection;
+:Sets up compliance dashboard;
+:Initiates baseline compliance assessment;
+
+|#LightSalmon|IT Administrator|
+:Creates user accounts for organization;
+:Assigns roles and permissions;
+:Configures user access policies;
+:Sets up departmental security groups;
+
+:Conducts initial security assessment;
+:Reviews vulnerability scan results;
+:Implements security baseline;
+:Validates endpoint protection;
+
+|#LightCyan|Security Training Coordinator|
+:Sets up security awareness training;
+:Configures phishing simulation campaigns;
+:Assigns training modules to users;
+:Sets up progress tracking;
+
+|#LightYellow|End Users|
+:Receive platform access notifications;
+:Complete initial security training;
+:Install endpoint agents on devices;
+:Configure mobile device management;
+
+|#Yellow|System (Automated)|
+:Begins continuous monitoring;
+:Starts real-time threat detection;
+:Initiates vulnerability scanning;
+:Begins compliance evidence collection;
+note right: Platform is now fully operational
+
+partition "**DAILY OPERATIONS WORKFLOW**" {
+
+|#LightSalmon|IT Administrator|
+:Starts morning security review (07:00);
+:Reviews overnight security events;
+:Checks critical alert dashboard;
+:Monitors system health status;
+:Reviews compliance score;
+
+if (Critical alerts present?) then (yes)
+  |#LightPink|Security Analyst|
+  :Receives critical alert notification;
+  :Opens incident response queue;
+  :Triages alert by severity;
+  :Begins initial investigation;
+
+  :Examines event timeline;
+  :Correlates related events;
+  :Analyzes user behavior patterns;
+  :Reviews network traffic;
+
+  if (Confirmed threat?) then (yes)
+    :Creates security incident;
+    :Assigns incident priority;
+    :Documents initial findings;
+    :Implements containment measures;
+
+    if (Endpoint isolation needed?) then (yes)
+      :Isolates affected endpoints;
+      :Blocks suspicious network traffic;
+      :Suspends compromised user accounts;
+    endif
+
+    :Collects digital evidence;
+    :Performs forensic analysis;
+    :Documents investigation steps;
+    :Updates incident status;
+
+    |#Yellow|System (Automated)|
+    :Sends real-time notifications;
+    :Updates dashboard metrics;
+    :Logs all response actions;
+    :Triggers compliance workflows;
+
+    |#LightPink|Security Analyst|
+    :Implements remediation actions;
+    :Verifies threat elimination;
+    :Restores affected systems;
+    :Updates security policies;
+    :Closes incident with report;
+  else (false positive)
+    :Marks as false positive;
+    :Tunes detection rules;
+    :Updates alert thresholds;
+  endif
+else (no critical alerts)
+  :Continues routine monitoring;
+endif
+
+|#Yellow|System (Automated)|
+:Performs continuous vulnerability scanning;
+:Updates threat intelligence feeds;
+:Processes security event logs;
+:Correlates events across systems;
+:Updates compliance metrics;
+
+|#LightSalmon|IT Administrator|
+:Reviews vulnerability management queue;
+:Prioritizes vulnerabilities by risk;
+:Plans patch deployment schedule;
+:Coordinates with business stakeholders;
+
+if (Critical vulnerabilities found?) then (yes)
+  :Implements emergency patches;
+  :Tests patch compatibility;
+  :Deploys patches to endpoints;
+  :Verifies patch installation;
+  :Updates vulnerability status;
+else (routine vulnerabilities)
+  :Schedules regular patch window;
+  :Adds to maintenance calendar;
+endif
+
+|#LightGreen|Compliance Manager|
+:Reviews daily compliance status;
+:Checks evidence collection progress;
+:Monitors control effectiveness;
+:Reviews audit preparation tasks;
+
+if (Compliance gap identified?) then (yes)
+  :Investigates root cause;
+  :Develops remediation plan;
+  :Assigns corrective actions;
+  :Updates compliance timeline;
+  :Documents remediation efforts;
+else (compliance on track)
+  :Updates compliance dashboard;
+  :Continues evidence collection;
+endif
+
+|#LightYellow|End Users|
+:Receive security notifications;
+:Complete assigned training modules;
+:Report suspicious emails/activities;
+:Follow security policies;
+
+if (Suspicious activity detected?) then (yes)
+  :Reports to IT/Security team;
+
+  |#LightPink|Security Analyst|
+  :Investigates user report;
+  :Analyzes reported activity;
+  :Determines threat level;
+  :Takes appropriate action;
+else (normal operations)
+  :Continues daily work;
+endif
+
+|#LightCyan|Security Training Coordinator|
+:Monitors training completion rates;
+:Reviews phishing simulation results;
+:Identifies high-risk users;
+:Schedules additional training;
+
+if (Failed phishing test?) then (yes)
+  :Provides targeted training;
+  :Schedules follow-up assessment;
+  :Updates user risk profile;
+endif
+
+|#LightSalmon|IT Administrator|
+:Reviews daily security metrics;
+:Analyzes system performance;
+:Monitors user activity;
+:Updates security documentation;
+
+:Plans weekly security review;
+:Schedules vulnerability assessments;
+:Reviews backup completion;
+:Updates incident response procedures;
+
+|#Yellow|System (Automated)|
+:Generates daily security reports;
+:Updates compliance scorecards;
+:Processes automated workflows;
+:Maintains audit logs;
+:Syncs with external systems;
+
+|#LightBlue|Business Owner/CEO|
+:Reviews executive dashboard;
+:Monitors business impact metrics;
+:Reviews compliance status;
+:Evaluates security ROI;
+
+if (Business review meeting?) then (yes)
+  |#LightCoral|Customer Success Manager|
+  :Presents monthly metrics;
+  :Discusses improvement opportunities;
+  :Reviews upcoming features;
+  :Gathers feedback;
+else (no meeting scheduled)
+  :Continues business operations;
+endif
+
+}
+
+partition "**WEEKLY OPERATIONS**" {
+
+|#LightSalmon|IT Administrator|
+:Conducts weekly security posture review;
+:Analyzes weekly vulnerability reports;
+:Reviews patch management status;
+:Updates security policies;
+:Plans upcoming maintenance;
+
+|#LightGreen|Compliance Manager|
+:Generates weekly compliance reports;
+:Reviews evidence collection status;
+:Conducts control gap analysis;
+:Updates audit preparation;
+:Meets with auditors (if scheduled);
+
+|#LightPink|Security Analyst|
+:Performs threat hunting activities;
+:Reviews security event trends;
+:Updates threat detection rules;
+:Analyzes attack patterns;
+:Improves incident response procedures;
+
+|#Yellow|System (Automated)|
+:Generates weekly analytical reports;
+:Performs system health checks;
+:Updates security baselines;
+:Optimizes performance metrics;
+
+}
+
+partition "**MONTHLY OPERATIONS**" {
+
+|#LightCoral|Customer Success Manager|
+:Conducts monthly business review;
+:Presents security ROI metrics;
+:Reviews platform utilization;
+:Discusses expansion opportunities;
+:Plans quarterly objectives;
+
+|#LightSalmon|IT Administrator|
+:Performs monthly security assessment;
+:Reviews user access permissions;
+:Updates disaster recovery plans;
+:Conducts security awareness campaign;
+
+|#LightGreen|Compliance Manager|
+:Generates monthly compliance reports;
+:Prepares for scheduled audits;
+:Reviews regulatory changes;
+:Updates compliance frameworks;
+
+}
+
+|#Yellow|System (Automated)|
+:Continues 24/7 monitoring;
+:Maintains real-time protection;
+:Processes security events;
+:Updates threat intelligence;
+:Ensures compliance tracking;
+
+stop
+
+@enduml

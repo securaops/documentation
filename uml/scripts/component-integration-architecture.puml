@@ -1,0 +1,249 @@
+
+@startuml System Integration and Component Architecture
+!include <cloudinsight/kafka>
+!include <cloudinsight/redis>
+!include <awslib/AWSCommon>
+!include <awslib/ApplicationIntegration/SimpleQueueService>
+!include <awslib/Database/RDS>
+!include <awslib/Storage/SimpleStorageService>
+
+package "External Integrations" {
+
+    package "Identity Providers" {
+        component [Active Directory] as AD
+        component [Google Workspace] as GWS
+        component [Microsoft 365] as M365
+        component [Okta] as OKTA
+    }
+
+    package "Security Tools" {
+        component [Splunk] as SPLUNK
+        component [QRadar] as QRADAR
+        component [ArcSight] as ARCSIGHT
+        component [Nessus] as NESSUS
+        component [Qualys] as QUALYS
+    }
+
+    package "Cloud Platforms" {
+        component [AWS CloudTrail] as AWS_CT
+        component [Azure Monitor] as AZURE_MON
+        component [GCP Cloud Logging] as GCP_LOG
+    }
+
+    package "Network Infrastructure" {
+        component [Cisco ASA] as CISCO
+        component [Palo Alto] as PA
+        component [SonicWall] as SONIC
+        component [pfSense] as PFSENSE
+    }
+
+    package "Endpoint Solutions" {
+        component [Windows Defender] as WD
+        component [CrowdStrike] as CS
+        component [SentinelOne] as S1
+        component [Carbon Black] as CB
+    }
+
+    package "Communication Platforms" {
+        component [Microsoft Teams] as TEAMS
+        component [Slack] as SLACK
+        component [Email Servers] as EMAIL
+        component [SMS Gateways] as SMS
+    }
+}
+
+package "CyberShield SMB Core Platform" {
+
+    package "API Gateway Layer" {
+        component [Gateway Service] as GATEWAY
+        component [Rate Limiter] as RATE_LIM
+        component [API Router] as ROUTER
+        component [Load Balancer] as LB
+    }
+
+    package "Integration Services" {
+        component [LDAP Connector] as LDAP_CONN
+        component [SAML Handler] as SAML
+        component [OAuth Provider] as OAUTH
+        component [REST API Client] as REST_CLIENT
+        component [SNMP Collector] as SNMP
+        component [Syslog Receiver] as SYSLOG
+        component [File Transfer] as FTP
+        component [Email Integration] as EMAIL_INT
+    }
+
+    package "Data Processing Pipeline" {
+        component [Event Parser] as PARSER
+        component [Data Normalizer] as NORMALIZER
+        component [Event Correlator] as CORRELATOR
+        component [ML Preprocessor] as ML_PREP
+        component [Batch Processor] as BATCH
+    }
+
+    package "Core Business Services" {
+        component [Tenant Management] as TENANT
+        component [User Management] as USER
+        component [Asset Management] as ASSET
+        component [Threat Detection] as THREAT
+        component [Compliance Engine] as COMPLIANCE
+        component [Reporting Engine] as REPORTING
+        component [Notification Engine] as NOTIFICATION
+    }
+
+    package "AI/ML Services" {
+        component [Anomaly Detection] as ANOMALY
+        component [Threat Scoring] as SCORING
+        component [Pattern Recognition] as PATTERN
+        component [Natural Language Processing] as NLP
+        component [Model Training] as TRAINING
+    }
+
+    package "Data Storage Layer" {
+        database "PostgreSQL\n(Multi-Tenant)" as POSTGRES
+        database "TimescaleDB\n(Time Series)" as TIMESCALE
+        database "Redis\n(Cache/Session)" as REDIS_DB
+        storage "MinIO\n(Object Storage)" as MINIO
+        queue "Kafka\n(Message Queue)" as KAFKA_Q
+    }
+}
+
+package "External APIs & Services" {
+
+    package "Threat Intelligence" {
+        cloud [VirusTotal API] as VT
+        cloud [AlienVault OTX] as OTX
+        cloud [Recorded Future] as RF
+        cloud [ThreatCrowd] as TC
+    }
+
+    package "Vulnerability Databases" {
+        cloud [National Vulnerability Database] as NVD
+        cloud [CVE Details] as CVE
+        cloud [Exploit Database] as EXPLOIT_DB
+    }
+
+    package "Geolocation & Reputation" {
+        cloud [MaxMind GeoIP] as MAXMIND
+        cloud [AbuseIPDB] as ABUSE_IP
+        cloud [URLVoid] as URLVOID
+    }
+
+    package "Communication Services" {
+        cloud [SendGrid] as SENDGRID
+        cloud [Twilio] as TWILIO
+        cloud [AWS SES] as SES
+        cloud [Slack API] as SLACK_API
+    }
+}
+
+' Integration Flows - Identity Providers
+AD --> LDAP_CONN : LDAP/LDAPS
+GWS --> SAML : SAML 2.0
+M365 --> OAUTH : OAuth 2.0/OIDC
+OKTA --> SAML : SAML 2.0
+
+LDAP_CONN --> USER : user sync
+SAML --> USER : SSO auth
+OAUTH --> USER : OAuth auth
+
+' Integration Flows - Security Tools
+SPLUNK --> REST_CLIENT : REST API
+QRADAR --> REST_CLIENT : REST API
+ARCSIGHT --> SYSLOG : CEF logs
+NESSUS --> REST_CLIENT : Vulnerability API
+QUALYS --> REST_CLIENT : VMDR API
+
+REST_CLIENT --> PARSER : security data
+SYSLOG --> PARSER : log events
+
+' Integration Flows - Cloud Platforms
+AWS_CT --> REST_CLIENT : CloudTrail API
+AZURE_MON --> REST_CLIENT : Monitor API
+GCP_LOG --> REST_CLIENT : Logging API
+
+' Integration Flows - Network Infrastructure
+CISCO --> SNMP : SNMP traps
+PA --> SYSLOG : firewall logs
+SONIC --> SNMP : SNMP polling
+PFSENSE --> SYSLOG : pf logs
+
+SNMP --> PARSER : network events
+SYSLOG --> PARSER : firewall events
+
+' Integration Flows - Endpoint Solutions
+WD --> REST_CLIENT : Graph API
+CS --> REST_CLIENT : Falcon API
+S1 --> REST_CLIENT : Management API
+CB --> REST_CLIENT : Response API
+
+' Integration Flows - Communication
+TEAMS --> EMAIL_INT : webhook
+SLACK --> EMAIL_INT : webhook
+EMAIL --> EMAIL_INT : SMTP/IMAP
+SMS --> EMAIL_INT : SMS gateway
+
+EMAIL_INT --> NOTIFICATION : message delivery
+
+' Data Processing Flow
+PARSER --> NORMALIZER : parsed events
+NORMALIZER --> KAFKA_Q : normalized data
+KAFKA_Q --> CORRELATOR : event stream
+CORRELATOR --> ML_PREP : correlated events
+ML_PREP --> ANOMALY : feature vectors
+
+' Core Service Interactions
+GATEWAY --> TENANT : tenant context
+GATEWAY --> USER : authentication
+GATEWAY --> ASSET : asset queries
+GATEWAY --> THREAT : threat data
+GATEWAY --> COMPLIANCE : compliance status
+GATEWAY --> REPORTING : report generation
+
+THREAT --> SCORING : threat analysis
+ANOMALY --> THREAT : anomaly alerts
+PATTERN --> THREAT : pattern matches
+CORRELATOR --> THREAT : incident creation
+
+COMPLIANCE --> REPORTING : compliance reports
+THREAT --> NOTIFICATION : incident alerts
+USER --> NOTIFICATION : user notifications
+
+' External API Integrations
+THREAT --> VT : file reputation
+THREAT --> OTX : threat intel
+SCORING --> RF : risk scoring
+PATTERN --> TC : crowd intelligence
+
+ASSET --> NVD : vulnerability lookup
+THREAT --> CVE : CVE details
+COMPLIANCE --> EXPLOIT_DB : exploit check
+
+THREAT --> MAXMIND : IP geolocation
+SCORING --> ABUSE_IP : IP reputation
+PATTERN --> URLVOID : URL reputation
+
+NOTIFICATION --> SENDGRID : email delivery
+NOTIFICATION --> TWILIO : SMS delivery
+NOTIFICATION --> SES : email delivery
+NOTIFICATION --> SLACK_API : Slack messages
+
+' Data Storage Connections
+TENANT --> POSTGRES : tenant data
+USER --> POSTGRES : user profiles
+ASSET --> POSTGRES : asset inventory
+THREAT --> POSTGRES : incident data
+COMPLIANCE --> POSTGRES : compliance records
+
+CORRELATOR --> TIMESCALE : time-series events
+ANOMALY --> TIMESCALE : anomaly scores
+PATTERN --> TIMESCALE : pattern matches
+
+USER --> REDIS_DB : session cache
+GATEWAY --> REDIS_DB : rate limiting
+NOTIFICATION --> REDIS_DB : pub/sub
+
+COMPLIANCE --> MINIO : evidence files
+REPORTING --> MINIO : generated reports
+TRAINING --> MINIO : ML models
+
+@enduml

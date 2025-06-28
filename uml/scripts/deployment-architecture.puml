@@ -1,0 +1,230 @@
+@startuml
+!theme aws-orange
+!define RECTANGLE class
+
+package "Kubernetes Cluster (Amazon EKS)" {
+
+    node "Web Tier Node Pool" {
+        rectangle "Frontend Pod" as FE_POD {
+            component [Angular App] as ANGULAR
+            component [Nginx] as NGINX
+        }
+
+        rectangle "Gateway Pod" as GW_POD {
+            component [Spring Cloud Gateway] as GATEWAY
+            component [OIDC Validator] as OIDC
+        }
+
+        rectangle "Load Balancer" as ALB {
+            component [AWS ALB] as LB
+        }
+    }
+
+    node "Core Services Node Pool" {
+        rectangle "Tenant Service Pod" as TS_POD {
+            component [Tenant Service] as TENANT_SVC
+        }
+
+        rectangle "Auth Service Pod" as AS_POD {
+            component [Auth Service] as AUTH_SVC
+        }
+
+        rectangle "User Service Pod" as US_POD {
+            component [User Service] as USER_SVC
+        }
+
+        rectangle "Threat Service Pod" as THS_POD {
+            component [Threat Service] as THREAT_SVC
+        }
+
+        rectangle "Compliance Service Pod" as CS_POD {
+            component [Compliance Service] as COMP_SVC
+        }
+
+        rectangle "Ingest Service Pod" as IS_POD {
+            component [Ingest Service] as INGEST_SVC
+        }
+
+        rectangle "Notification Service Pod" as NS_POD {
+            component [Notification Service] as NOTIF_SVC
+            component [WebSocket Gateway] as WSG
+        }
+
+        rectangle "Reporting Service Pod" as RS_POD {
+            component [Reporting Service] as REPORT_SVC
+        }
+    }
+
+    node "AI/ML Node Pool (GPU)" {
+        rectangle "AI Insight Service Pod" as AIS_POD {
+            component [AI Insight Service] as AI_SVC
+            component [TensorFlow] as TF
+            component [PyTorch] as TORCH
+        }
+
+        rectangle "ML Pipeline Pod" as MLP_POD {
+            component [ML Pipeline] as ML_PIPELINE
+            component [Model Training] as ML_TRAIN
+        }
+    }
+
+    node "Message Queue" {
+        rectangle "Kafka Pod 1" as K1 {
+            component [Kafka Broker 1] as KAFKA1
+        }
+
+        rectangle "Kafka Pod 2" as K2 {
+            component [Kafka Broker 2] as KAFKA2
+        }
+
+        rectangle "Kafka Pod 3" as K3 {
+            component [Kafka Broker 3] as KAFKA3
+        }
+
+        rectangle "Schema Registry Pod" as SR_POD {
+            component [Schema Registry] as SCHEMA_REG
+        }
+    }
+}
+
+package "Managed AWS Services" {
+    database "Amazon RDS\n(PostgreSQL)" as RDS {
+        component [Primary Instance] as RDS_PRIMARY
+        component [Read Replica] as RDS_REPLICA
+    }
+
+    database "Amazon MSK\n(Kafka Managed)" as MSK {
+        component [Kafka Cluster] as MSK_KAFKA
+        component [ZooKeeper] as MSK_ZK
+    }
+
+    cloud "Amazon ElastiCache\n(Redis)" as ELASTICACHE {
+        component [Redis Cluster] as REDIS
+    }
+
+    storage "Amazon S3" as S3 {
+        component [Evidence Storage] as S3_EVIDENCE
+        component [Report Storage] as S3_REPORTS
+        component [Backup Storage] as S3_BACKUP
+        component [Log Archives] as S3_LOGS
+    }
+
+    cloud "Amazon EFS" as EFS {
+        component [Shared File System] as EFS_SHARE
+    }
+}
+
+package "External Services" {
+    cloud "Keycloak\n(Identity Provider)" as KEYCLOAK {
+        component [Identity Management] as IDM
+        component [SSO Provider] as SSO
+    }
+
+    cloud "HashiCorp Vault\n(Secrets Management)" as VAULT {
+        component [Secret Store] as SECRETS
+        component [Certificate Authority] as CA
+    }
+
+    cloud "Threat Intelligence\nFeeds" as TI_FEEDS {
+        component [CVE Database] as CVE
+        component [IoC Feeds] as IOC
+        component [Malware Signatures] as MALWARE
+    }
+}
+
+package "Monitoring Stack" {
+    node "Monitoring Node Pool" {
+        rectangle "Prometheus Pod" as PROM_POD {
+            component [Prometheus] as PROMETHEUS
+            component [AlertManager] as ALERT_MGR
+        }
+
+        rectangle "Grafana Pod" as GRAF_POD {
+            component [Grafana] as GRAFANA
+        }
+
+        rectangle "Loki Pod" as LOKI_POD {
+            component [Loki] as LOKI
+        }
+
+        rectangle "Jaeger Pod" as JAEGER_POD {
+            component [Jaeger] as JAEGER
+        }
+
+        rectangle "OTEL Collector Pod" as OTEL_POD {
+            component [OpenTelemetry] as OTEL
+        }
+    }
+}
+
+package "Ingress & Security" {
+    rectangle "NGINX Ingress" as INGRESS {
+        component [Ingress Controller] as INGRESS_CTRL
+        component [TLS Termination] as TLS
+    }
+
+    rectangle "Certificate Manager" as CERT_MGR {
+        component [Cert Manager] as CERT
+        component [Let's Encrypt] as LETSENCRYPT
+    }
+
+    rectangle "Network Policies" as NET_POL {
+        component [Calico] as CALICO
+        component [Security Policies] as SEC_POL
+    }
+}
+
+' External Traffic Flow
+Internet --> ALB : HTTPS
+ALB --> INGRESS : Load Balance
+INGRESS --> FE_POD : Route /
+INGRESS --> GW_POD : Route /api
+
+' Frontend to Backend
+NGINX --> GATEWAY : API Calls
+GATEWAY --> TS_POD : Tenant Mgmt
+GATEWAY --> AS_POD : Authentication
+GATEWAY --> US_POD : User Mgmt
+GATEWAY --> THS_POD : Threats
+GATEWAY --> CS_POD : Compliance
+GATEWAY --> IS_POD : Ingest
+GATEWAY --> NS_POD : Notifications
+GATEWAY --> RS_POD : Reports
+
+' Service to Service Communication
+TS_POD --> RDS : Tenant Data
+US_POD --> RDS : User Data
+THS_POD --> RDS : Incident Data
+CS_POD --> RDS : Compliance Data
+IS_POD --> MSK : Event Stream
+THS_POD --> MSK : Consume Events
+NS_POD --> REDIS : Pub/Sub
+WSG --> REDIS : WebSocket State
+
+' AI/ML Services
+THS_POD --> AIS_POD : ML Inference
+AIS_POD --> MLP_POD : Model Updates
+ML_PIPELINE --> S3 : Model Storage
+
+' External Service Integration
+AS_POD --> KEYCLOAK : Authentication
+TS_POD --> VAULT : Secrets
+IS_POD --> TI_FEEDS : Threat Intel
+
+' Storage Connections
+CS_POD --> S3 : Evidence Files
+RS_POD --> S3 : Generated Reports
+ALL_PODS --> EFS : Shared Config
+
+' Monitoring Connections
+ALL_PODS --> OTEL : Traces
+ALL_PODS --> PROMETHEUS : Metrics
+ALL_PODS --> LOKI : Logs
+PROMETHEUS --> GRAFANA : Visualization
+OTEL --> JAEGER : Distributed Tracing
+
+' Security
+CERT_MGR --> LETSENCRYPT : Certificate
+TLS --> CERT : SSL/TLS
+CALICO --> SEC_POL : Network Security
+@enduml

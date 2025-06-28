@@ -1,0 +1,399 @@
+
+@startuml Domain Model Class Diagram
+package "Tenant Management" {
+    class Tenant {
+        +UUID id
+        +String name
+        +String subdomain
+        +String schemaName
+        +TenantStatus status
+        +SubscriptionPlan plan
+        +Integer maxUsers
+        +Integer maxEndpoints
+        +String billingEmail
+        +String technicalContact
+        +DateTime createdAt
+        +DateTime updatedAt
+        --
+        +createSchema()
+        +updateSubscription()
+        +suspend()
+        +activate()
+    }
+
+    enum TenantStatus {
+        ACTIVE
+        SUSPENDED
+        TERMINATED
+    }
+
+    enum SubscriptionPlan {
+        STARTER
+        PROFESSIONAL
+        ENTERPRISE
+    }
+}
+
+package "User Management" {
+    class User {
+        +UUID id
+        +UUID tenantId
+        +String email
+        +String firstName
+        +String lastName
+        +String phone
+        +Boolean isActive
+        +DateTime lastLogin
+        +Boolean mfaEnabled
+        +UserRole role
+        +String passwordHash
+        +DateTime createdAt
+        +DateTime updatedAt
+        --
+        +authenticate()
+        +enableMFA()
+        +updateProfile()
+        +changePassword()
+    }
+
+    enum UserRole {
+        ADMIN
+        ANALYST
+        USER
+        AUDITOR
+    }
+
+    class UserSession {
+        +UUID id
+        +UUID userId
+        +String sessionToken
+        +String ipAddress
+        +String userAgent
+        +DateTime createdAt
+        +DateTime expiresAt
+        +Boolean isActive
+        --
+        +validate()
+        +refresh()
+        +terminate()
+    }
+}
+
+package "Asset Management" {
+    class Endpoint {
+        +UUID id
+        +String hostname
+        +IPAddress ipAddress
+        +MACAddress macAddress
+        +String operatingSystem
+        +String osVersion
+        +EndpointType type
+        +EndpointStatus status
+        +DateTime lastSeen
+        +String agentVersion
+        +String location
+        +UUID ownerUserId
+        +DateTime createdAt
+        +DateTime updatedAt
+        --
+        +register()
+        +updateStatus()
+        +quarantine()
+        +updateAgent()
+    }
+
+    enum EndpointType {
+        WORKSTATION
+        SERVER
+        MOBILE
+        IOT
+    }
+
+    enum EndpointStatus {
+        ACTIVE
+        INACTIVE
+        QUARANTINED
+        OFFLINE
+    }
+}
+
+package "Security Events" {
+    class SecurityEvent {
+        +UUID id
+        +UUID endpointId
+        +String eventType
+        +JSON eventData
+        +DateTime timestamp
+        +EventSeverity severity
+        +Boolean processed
+        +UUID threatId
+        +DateTime createdAt
+        --
+        +process()
+        +correlate()
+        +classify()
+    }
+
+    class Threat {
+        +UUID id
+        +String threatType
+        +ThreatSeverity severity
+        +ThreatStatus status
+        +String title
+        +String description
+        +UUID sourceEndpointId
+        +UUID assignedUserId
+        +DateTime detectedAt
+        +DateTime resolvedAt
+        +String mitreTactic
+        +String mitreTechnique
+        +Decimal confidenceScore
+        +DateTime createdAt
+        +DateTime updatedAt
+        --
+        +escalate()
+        +resolve()
+        +assign()
+        +addEvidence()
+    }
+
+    enum ThreatSeverity {
+        CRITICAL
+        HIGH
+        MEDIUM
+        LOW
+    }
+
+    enum ThreatStatus {
+        OPEN
+        INVESTIGATING
+        RESOLVED
+        FALSE_POSITIVE
+    }
+
+    enum EventSeverity {
+        CRITICAL
+        HIGH
+        MEDIUM
+        LOW
+        INFO
+    }
+}
+
+package "Vulnerability Management" {
+    class Vulnerability {
+        +UUID id
+        +String cveId
+        +String title
+        +String description
+        +VulnerabilitySeverity severity
+        +Decimal cvssScore
+        +UUID endpointId
+        +VulnerabilityStatus status
+        +DateTime discoveredAt
+        +DateTime patchedAt
+        +DateTime createdAt
+        --
+        +assess()
+        +patch()
+        +mitigate()
+        +accept()
+    }
+
+    enum VulnerabilitySeverity {
+        CRITICAL
+        HIGH
+        MEDIUM
+        LOW
+    }
+
+    enum VulnerabilityStatus {
+        OPEN
+        IN_PROGRESS
+        PATCHED
+        MITIGATED
+        ACCEPTED
+    }
+}
+
+package "Compliance Management" {
+    class ComplianceFramework {
+        +UUID id
+        +String name
+        +String version
+        +String description
+        +Boolean isActive
+        +DateTime createdAt
+        --
+        +addControl()
+        +updateVersion()
+        +activate()
+        +deactivate()
+    }
+
+    class ComplianceControl {
+        +UUID id
+        +UUID frameworkId
+        +String controlNumber
+        +String title
+        +String description
+        +String controlType
+        +String category
+        +Boolean isActive
+        --
+        +assess()
+        +updateDescription()
+    }
+
+    class ComplianceAssessment {
+        +UUID id
+        +UUID frameworkId
+        +UUID controlId
+        +ComplianceStatus status
+        +Boolean evidenceCollected
+        +DateTime lastAssessed
+        +DateTime nextAssessment
+        +String notes
+        +UUID assignedUserId
+        +DateTime createdAt
+        +DateTime updatedAt
+        --
+        +assess()
+        +collectEvidence()
+        +schedule()
+        +complete()
+    }
+
+    class ComplianceEvidence {
+        +UUID id
+        +UUID assessmentId
+        +String evidenceType
+        +String fileName
+        +String filePath
+        +Long fileSize
+        +String mimeType
+        +String hashSha256
+        +UUID uploadedBy
+        +DateTime uploadedAt
+        +String description
+        --
+        +upload()
+        +verify()
+        +delete()
+    }
+
+    enum ComplianceStatus {
+        COMPLIANT
+        NON_COMPLIANT
+        PARTIAL
+        NOT_ASSESSED
+    }
+}
+
+package "Reporting & Analytics" {
+    class Report {
+        +UUID id
+        +String name
+        +String type
+        +ReportFormat format
+        +ReportStatus status
+        +String filePath
+        +Long fileSize
+        +JSON parameters
+        +UUID generatedBy
+        +DateTime generatedAt
+        +DateTime expiresAt
+        +DateTime createdAt
+        --
+        +generate()
+        +export()
+        +schedule()
+        +expire()
+    }
+
+    enum ReportFormat {
+        PDF
+        CSV
+        JSON
+        XLSX
+    }
+
+    enum ReportStatus {
+        PENDING
+        GENERATING
+        COMPLETED
+        FAILED
+        EXPIRED
+    }
+}
+
+package "Audit & Notifications" {
+    class AuditLog {
+        +UUID id
+        +UUID userId
+        +String action
+        +String entityType
+        +UUID entityId
+        +JSON oldValues
+        +JSON newValues
+        +IPAddress ipAddress
+        +String userAgent
+        +String sessionId
+        +DateTime timestamp
+        +Boolean success
+        +String errorMessage
+        --
+        +log()
+        +search()
+        +export()
+    }
+
+    class Notification {
+        +UUID id
+        +UUID userId
+        +String type
+        +String title
+        +String message
+        +NotificationPriority priority
+        +Boolean read
+        +String relatedEntityType
+        +UUID relatedEntityId
+        +DateTime createdAt
+        +DateTime readAt
+        --
+        +send()
+        +markRead()
+        +dismiss()
+    }
+
+    enum NotificationPriority {
+        CRITICAL
+        HIGH
+        MEDIUM
+        LOW
+    }
+}
+
+' Relationships
+Tenant ||--o{ User : "has many"
+User ||--o{ UserSession : "has many"
+User ||--o{ Endpoint : "owns"
+Endpoint ||--o{ SecurityEvent : "generates"
+SecurityEvent }o--|| Threat : "belongs to"
+Endpoint ||--o{ Vulnerability : "has"
+Threat }o--|| User : "assigned to"
+
+ComplianceFramework ||--o{ ComplianceControl : "contains"
+ComplianceControl ||--o{ ComplianceAssessment : "assessed by"
+ComplianceAssessment ||--o{ ComplianceEvidence : "supported by"
+ComplianceAssessment }o--|| User : "assigned to"
+
+User ||--o{ Report : "generates"
+User ||--o{ AuditLog : "performs actions"
+User ||--o{ Notification : "receives"
+
+Tenant ||--o{ ComplianceAssessment : "has"
+Tenant ||--o{ Report : "owns"
+Tenant ||--o{ AuditLog : "contains"
+
+@enduml

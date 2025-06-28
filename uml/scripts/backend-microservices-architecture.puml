@@ -1,0 +1,134 @@
+
+@startuml Backend Microservices Architecture
+!define RECTANGLE class
+
+package "CyberShield SMB Backend" {
+
+    package "API Gateway Layer" {
+        component [Gateway Service] as GW
+        component [Rate Limiter] as RL
+        component [Load Balancer] as LB
+        component [OIDC Validator] as OV
+    }
+
+    package "Core Services" {
+        component [Tenant Service] as TS
+        component [Auth Service] as AS
+        component [User Service] as US
+        component [Policy Decision Service] as PDS
+    }
+
+    package "Security Services" {
+        component [Ingest Service] as IS
+        component [Threat Service] as THS
+        component [Compliance Service] as CS
+        component [Vulnerability Service] as VS
+    }
+
+    package "Analytics & AI" {
+        component [AI Insight Service] as AIS
+        component [Reporting Service] as RS
+        component [Analytics Engine] as AE
+        component [ML Pipeline] as MLP
+    }
+
+    package "Communication Services" {
+        component [Notification Service] as NS
+        component [WebSocket Gateway] as WSG
+        component [Email Service] as ES
+        component [SMS Service] as SMS
+    }
+
+    package "Data Layer" {
+        database "PostgreSQL\n(Schema per Tenant)" as PG
+        database "TimescaleDB\n(Time Series)" as TS_DB
+        database "MinIO\n(Object Storage)" as MINIO
+        database "Redis\n(Cache/PubSub)" as REDIS
+    }
+
+    package "Message Queue" {
+        queue "Kafka Cluster" as KAFKA
+        component [Schema Registry] as SR
+        component [Avro Serializer] as AVRO
+    }
+
+    package "External Integrations" {
+        component [Keycloak IDM] as KC
+        component [Vault Secrets] as VAULT
+        component [SPIFFE/SPIRE] as SPIRE
+        component [Threat Intel Feeds] as TIF
+    }
+
+    package "Monitoring & Observability" {
+        component [OpenTelemetry] as OT
+        component [Prometheus] as PROM
+        component [Loki Logs] as LOKI
+        component [Jaeger Tracing] as JAEGER
+    }
+}
+
+' Gateway Layer Relationships
+LB --> GW : routes
+GW --> RL : enforces
+GW --> OV : validates
+OV --> KC : authenticates
+
+' Core Services Relationships
+GW --> TS : routes
+GW --> AS : routes
+GW --> US : routes
+AS --> KC : delegates
+US --> PDS : queries
+PDS --> REDIS : caches
+
+' Security Services Relationships
+GW --> IS : routes
+GW --> THS : routes
+GW --> CS : routes
+GW --> VS : routes
+IS --> KAFKA : publishes
+THS --> KAFKA : consumes
+THS --> AIS : queries
+
+' Analytics Relationships
+RS --> AE : uses
+AE --> MLP : triggers
+AIS --> MLP : processes
+MLP --> TS_DB : reads
+
+' Communication Relationships
+NS --> WSG : publishes
+NS --> ES : sends
+NS --> SMS : sends
+WSG --> REDIS : pub/sub
+
+' Data Layer Relationships
+TS --> PG : tenant_schema
+US --> PG : user_data
+THS --> PG : incidents
+CS --> PG : compliance
+VS --> PG : vulnerabilities
+IS --> TS_DB : events
+CS --> MINIO : evidence
+RS --> MINIO : reports
+
+' Message Queue Relationships
+IS --> KAFKA : events
+THS --> KAFKA : incidents
+CS --> KAFKA : compliance
+KAFKA --> SR : schemas
+SR --> AVRO : serialization
+
+' External Integration Relationships
+AS --> KC : auth
+TS --> VAULT : secrets
+GW --> SPIRE : mTLS
+IS --> TIF : feeds
+
+' Monitoring Relationships
+GW --> OT : traces
+TS --> PROM : metrics
+IS --> LOKI : logs
+THS --> JAEGER : traces
+
+@enduml
